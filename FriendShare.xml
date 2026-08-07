@@ -3,12 +3,8 @@
 	<Script file="FriendShare.lua"/>
 	<Frame name="FriendsShare" hidden="true">
 		<Scripts>
-			<OnLoad>
-				FriendShare_OnLoad();
-            </OnLoad>
-            <OnEvent>
-				FriendShare_OnEvent(event);
-            </OnEvent>
+			<OnLoad function="FriendShare_OnLoad"/>
+			<OnEvent function="FriendShare_OnEvent"/>
 		</Scripts>
 	</Frame>
 </Ui>

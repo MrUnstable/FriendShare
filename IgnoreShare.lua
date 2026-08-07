@@ -1,10 +1,12 @@
 --------------------------------------------------------------------------
--- IgnoreShare.lua 
+-- IgnoreShare.lua
 --------------------------------------------------------------------------
 --[[
 author: Vimrasha
+ported to 7.3.5: implicit "this" replaced with explicit self (removed
+from the client since Cataclysm).
 
-IgnoreShare works the same way that FriendShare works. The only 
+IgnoreShare works the same way that FriendShare works. The only
 difference is that it synchronizes your ignore lists instead of
 your friends lists.
 ]]--
@@ -19,16 +21,16 @@ IgnoreShare_GlobalIgnores = {}
 IgnoreShare_RemovedIgnores = {}
 
 function IgnoreShare_ChatPrint(str)
-	if ( DEFAULT_CHAT_FRAME ) then 
+	if ( DEFAULT_CHAT_FRAME ) then
 		DEFAULT_CHAT_FRAME:AddMessage(str, 0.3, 0.3, 1.0);
 	end
 end
 
-function IgnoreShare_OnLoad()
+function IgnoreShare_OnLoad(self)
 
 	-- register events
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LEAVING_WORLD");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LEAVING_WORLD");
 
 	SLASH_IgnoreShare1 = "/ignoreshare";
 	SLASH_IgnoreShare2 = "/is";
@@ -48,7 +50,7 @@ end
 function IgnoreShare_CurrentIgnores()
 	local numIgnores = GetNumIgnores();
 	local curIgnores = {};
-	
+
 	-- Build a list of my current ignores so I don't try to add them below.
 	for i=1, numIgnores do
 		local name = GetIgnoreName(i);
@@ -94,7 +96,7 @@ function IgnoreShare_Import()
 			not IgnoreShare_RemovedIgnores[realmAndFaction][name] )
 		then
 			IgnoreShare_ChatPrint( "IgnoreShare: Attempting to ignore " .. name );
-			AddIgnore( name );
+			FriendShare_QueueAction(AddIgnore, name);
 		end
 	end
 
@@ -102,7 +104,7 @@ function IgnoreShare_Import()
 	for i, name in pairs( IgnoreShare_RemovedIgnores[realmAndFaction] ) do
 		if ( name ~= player and curIgnores[name] ) then
 			IgnoreShare_GlobalIgnores[realmAndFaction][name] = nil;
-			DelIgnore( name );
+			FriendShare_QueueAction(DelIgnore, name);
 			curIgnores[name] = nil;
 		end
 	end
@@ -111,11 +113,11 @@ function IgnoreShare_Import()
 	IgnoreShare_ChatPrint( "IgnoreShare: Global ignore list imported." );
 end
 
-function IgnoreShare_OnEvent(event)
+function IgnoreShare_OnEvent(self, event, ...)
 
 	if ( event == "PLAYER_ENTERING_WORLD" ) then
 		-- Only do this stuff once.
-		this:UnregisterEvent("PLAYER_ENTERING_WORLD");
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD");
 
 		-- Can't init this value until the player is in the world...
 		realmAndFaction = FriendShare_RealmAndFaction();
@@ -126,7 +128,7 @@ function IgnoreShare_OnEvent(event)
 		-- A client timing bug could have placed this bogus value in the list
 		IgnoreShare_GlobalIgnores[realmAndFaction][UNKNOWN] = nil;
 
-		
+
 		if ( not IgnoreShare_RemovedIgnores[realmAndFaction] ) then
 			IgnoreShare_RemovedIgnores[realmAndFaction] = {};
 		end
@@ -136,7 +138,7 @@ function IgnoreShare_OnEvent(event)
 		-- Player must be in the world before we start listening to these events
 		-- so that the player's faction is know and its list of ignores
 		-- has been loaded.
-		this:RegisterEvent("IGNORELIST_UPDATE");
+		self:RegisterEvent("IGNORELIST_UPDATE");
 	end
 
 	if ( event == "IGNORELIST_UPDATE" ) then
@@ -188,4 +190,3 @@ function IgnoreShare_DelIgnore(nameOrIndex)
 	IgnoreShare_GlobalIgnores[realmAndFaction][name] = nil;
 	IgnoreShare_RemovedIgnores[realmAndFaction][name] = name;
 end
-

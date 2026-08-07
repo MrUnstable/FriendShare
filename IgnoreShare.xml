@@ -3,12 +3,8 @@
 	<Script file="IgnoreShare.lua"/>
 	<Frame name="IgnoreShare" hidden="true">
 		<Scripts>
-			<OnLoad>
-				IgnoreShare_OnLoad();
-			</OnLoad>
-			<OnEvent>
-				IgnoreShare_OnEvent(event);
-			</OnEvent>
+			<OnLoad function="IgnoreShare_OnLoad"/>
+			<OnEvent function="IgnoreShare_OnEvent"/>
 		</Scripts>
 	</Frame>
 </Ui>
