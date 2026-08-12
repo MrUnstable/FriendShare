@@ -1,7 +1,7 @@
 ## Interface: 70300
 ## Title: Friend & Ignore Share v1.4.3
 ## Notes: Synchronizes your friends and ignore lists across your alts.|nBackport by Reckwell - Evermoon (TauriWoW). |nUpdates on https://github.com/MrUnstable/FriendShare
-## Author: Vimrasha
+## Author: Vimrash
 ## OptionalDeps:
 ## Dependencies:
 ## SavedVariables: FriendShare_GlobalFriends FriendShare_RemovedFriends FriendShare_Alts FriendShare_AutoAlts IgnoreShare_GlobalIgnores IgnoreShare_RemovedIgnores
